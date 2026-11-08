@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0D1117" />
+  <title>Universal Java Studio — Offline Web IDE (JDK 1.0 – JDK 25)</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="brand-badge">{Java} 1.0–25</span>
+      <div>
+        <div style="font-weight:700;font-size:16px;">Universal Java Studio (Web Edition)</div>
+        <div style="font-size:11.5px;color:var(--muted);">All-Version Offline Java IDE, Compiler, Execution Environment &amp; Learning Platform</div>
+      </div>
+      <span id="offlineStatus" class="status-pill">OFFLINE READY (SW Cached)</span>
+    </div>
+    <div class="toolbar">
+      <label for="jdkSelect" style="font-size:12px;color:var(--muted);">Active JDK:</label>
+      <select id="jdkSelect" onchange="onJdkChanged()">
+        <option value="0">JDK 1.0 (Bytecode 45.3)</option>
+        <option value="1">JDK 1.1 (Bytecode 45.3)</option>
+        <option value="2">JDK 1.2 – Java 2 (Bytecode 46.0)</option>
+        <option value="3">JDK 1.3 (Bytecode 47.0)</option>
+        <option value="4">JDK 1.4 (Bytecode 48.0)</option>
+        <option value="5">JDK 5 (Bytecode 49.0)</option>
+        <option value="6">JDK 6 (Bytecode 50.0)</option>
+        <option value="7">JDK 7 (Bytecode 51.0)</option>
+        <option value="8">JDK 8 LTS (Bytecode 52.0)</option>
+        <option value="9">JDK 9 (Bytecode 53.0)</option>
+        <option value="10">JDK 10 (Bytecode 54.0)</option>
+        <option value="11">JDK 11 LTS (Bytecode 55.0)</option>
+        <option value="14">JDK 14 (Bytecode 58.0)</option>
+        <option value="16">JDK 16 (Bytecode 60.0)</option>
+        <option value="17" selected>JDK 17 LTS (Bytecode 61.0)</option>
+        <option value="21">JDK 21 LTS (Bytecode 65.0)</option>
+        <option value="25">JDK 25 LTS (Bytecode 69.0)</option>
+      </select>
+      <button class="primary" onclick="compileAndRun()">Compile &amp; Run</button>
+      <button id="installPwaBtn" class="accent hidden" onclick="installOfflineApp()">Install Offline Web App</button>
+    </div>
+  </header>
+
+  <nav>
+    <button id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+    <button id="tab-editor" class="active" onclick="switchTab('editor')">Code Editor &amp; Compiler</button>
+    <button id="tab-explorer" onclick="switchTab('explorer')">Java Version Explorer (Java 8 vs 17+)</button>
+    <button id="tab-practice" onclick="switchTab('practice')">Practice Lab (25 Categories)</button>
+    <button id="tab-tutorials" onclick="switchTab('tutorials')">Offline Tutorials &amp; API Docs</button>
+    <button id="tab-projects" onclick="switchTab('projects')">Offline Projects (IndexedDB)</button>
+  </nav>
+
+  <main>
+    <!-- DASHBOARD -->
+    <section id="sec-dashboard" class="hidden">
+      <div class="card">
+        <h3>Welcome to Universal Java Studio — 100% Offline Web IDE</h3>
+        <p style="color:var(--muted);font-size:13.5px;line-height:1.55;margin-bottom:12px;">
+          Write, compile, inspect bytecode (<code>0xCAFEBABE</code>), and execute Java programs across historical and modern releases from <b>JDK 1.0 / Java 2 (JDK 1.2)</b> through <b>JDK 25 LTS</b>. All code, projects, and tutorials are persisted offline in your browser via Service Worker &amp; IndexedDB/LocalStorage.
+        </p>
+        <div class="grid-3">
+          <div class="card">
+            <h3>Multi-Version Code Editor</h3>
+            <p style="color:var(--muted);font-size:12.5px;margin-bottom:10px;">Dynamic QScintilla-equivalent syntax highlighting that adapts to your chosen JDK version, flagging unsupported future syntax and deprecated APIs.</p>
+            <button class="accent" onclick="switchTab('editor')">Open Code Editor</button>
+          </div>
+          <div class="card">
+            <h3>Java Version Explorer</h3>
+            <p style="color:var(--muted);font-size:12.5px;margin-bottom:10px;">Compare any two Java releases (such as Java 8 and Java 17) across language changes, APIs, deprecations, JVM/GC, and bytecode in tabular &amp; graphical views.</p>
+            <button class="amber" onclick="switchTab('explorer')">Compare Java Versions</button>
+          </div>
+          <div class="card">
+            <h3>25-Category Practice Lab</h3>
+            <p style="color:var(--muted);font-size:12.5px;margin-bottom:10px;">Practice hands-on exercises from basic variables and OOP to Java 2 Collections, Java 8 Streams, Java 17 Records, and Java 21 Virtual Threads.</p>
+            <button class="primary" onclick="switchTab('practice')">Launch Practice Lab</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CODE EDITOR & COMPILER -->
+    <section id="sec-editor">
+      <div class="telemetry-bar" id="lexerTelemetry"></div>
+      <div class="grid-2">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
+            <h3>Java Source Editor (Offline Auto-Saved)</h3>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button onclick="loadTemplate('java2')">Java 2 (JDK 1.2)</button>
+              <button onclick="loadTemplate('java8')">Java 8 Streams</button>
+              <button onclick="loadTemplate('modern')">Java 17 Record</button>
+              <button onclick="loadTemplate('showcase')">Syntax Showcase</button>
+            </div>
+          </div>
+          <textarea id="codeInput" oninput="updateHighlightingAndSave()" spellcheck="false">record Developer(String name, int jdkVersion) {}
+
+public class Main {
+    public static void main(String[] args) {
+        var dev = new Developer("Universal Java Studio", 17);
+        System.out.println("Running offline on JDK " + dev.jdkVersion() + " by " + dev.name());
+    }
+}</textarea>
+          <div style="font-size:12px;color:var(--muted);margin:10px 0 6px;">
+            Live Version-Specific Syntax Highlighting (<span id="activeJdkLabel">JDK 17</span>):
+          </div>
+          <div id="highlightPreview" class="highlight-preview"></div>
+        </div>
+
+        <div class="card">
+          <h3>Compiler Diagnostics, Bytecode (javap) &amp; Execution Output</h3>
+          <div style="margin-bottom:8px;display:flex;gap:8px;align-items:center;">
+            <label for="stdinBox" style="font-size:12px;color:var(--muted);">Program Stdin:</label>
+            <input id="stdinBox" type="text" value="42" style="flex:1;" placeholder="Optional Scanner input..." />
+          </div>
+          <div id="consoleOutput" class="console-box"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- JAVA VERSION EXPLORER -->
+    <section id="sec-explorer" class="hidden">
+      <div class="card">
+        <h3>Java Version Explorer — Side-by-Side Graphical &amp; Tabular Comparison</h3>
+        <div class="chip-row">
+          <span class="chip" onclick="setPair('JDK_8','JDK_17')">Java 8 vs Java 17</span>
+          <span class="chip" onclick="setPair('JDK_1_2','JDK_1_4')">Java 1.2 vs Java 1.4</span>
+          <span class="chip" onclick="setPair('JDK_1_4','JDK_5')">Java 1.4 vs Java 5</span>
+          <span class="chip" onclick="setPair('JDK_5','JDK_8')">Java 5 vs Java 8</span>
+          <span class="chip" onclick="setPair('JDK_8','JDK_11')">Java 8 vs Java 11</span>
+          <span class="chip" onclick="setPair('JDK_11','JDK_17')">Java 11 vs Java 17</span>
+          <span class="chip" onclick="setPair('JDK_17','JDK_21')">Java 17 vs Java 21</span>
+          <span class="chip" onclick="setPair('JDK_21','JDK_25')">Java 21 vs Java 25</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0;">
+          <label>Baseline Version:</label>
+          <select id="verLeft" onchange="renderComparison()">
+            <option value="JDK_1_0">JDK 1.0 (1996)</option>
+            <option value="JDK_1_2">Java 1.2 – Java 2 (1998)</option>
+            <option value="JDK_1_4">Java 1.4 (2002)</option>
+            <option value="JDK_5">Java 5 (2004)</option>
+            <option value="JDK_8" selected>Java 8 LTS (2014)</option>
+            <option value="JDK_11">Java 11 LTS (2018)</option>
+            <option value="JDK_17">Java 17 LTS (2021)</option>
+            <option value="JDK_21">Java 21 LTS (2023)</option>
+          </select>
+          <span style="color:var(--amber);font-weight:700;">VS</span>
+          <label>Target Version:</label>
+          <select id="verRight" onchange="renderComparison()">
+            <option value="JDK_1_4">Java 1.4 (2002)</option>
+            <option value="JDK_5">Java 5 (2004)</option>
+            <option value="JDK_8">Java 8 LTS (2014)</option>
+            <option value="JDK_11">Java 11 LTS (2018)</option>
+            <option value="JDK_17" selected>Java 17 LTS (2021)</option>
+            <option value="JDK_21">Java 21 LTS (2023)</option>
+            <option value="JDK_25">Java 25 LTS (2025)</option>
+          </select>
+        </div>
+        <div id="graphicalComparison" style="margin:14px 0;"></div>
+        <table id="tabularComparison"></table>
+      </div>
+    </section>
+
+    <!-- PRACTICE LAB -->
+    <section id="sec-practice" class="hidden">
+      <div class="card">
+        <h3>Offline Java Practice Laboratory</h3>
+        <div id="practiceChips" class="chip-row"></div>
+        <div id="practiceDetails" style="margin-top:12px;"></div>
+      </div>
+    </section>
+
+    <!-- TUTORIALS & API DOCS -->
+    <section id="sec-tutorials" class="hidden">
+      <div class="card">
+        <h3>Offline Java Tutorials &amp; Version-Aware API Documentation (JDK 1.0 – JDK 25)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Class / API</th>
+              <th>Package</th>
+              <th>Introduced</th>
+              <th>Offline Reference &amp; Version Compatibility</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Vector, Hashtable, Stack</td><td>java.util</td><td>JDK 1.0</td><td>Legacy synchronized collections available in all JDK releases.</td></tr>
+            <tr><td>List, ArrayList, HashMap, Collections</td><td>java.util</td><td>JDK 1.2 (Java 2)</td><td>Core Java 2 Collections Framework (Bytecode 46.0).</td></tr>
+            <tr><td>Assertion (assert), Regex, NIO</td><td>java.util.regex / java.nio</td><td>JDK 1.4</td><td>Requires javac -source 1.4 and java -ea (Bytecode 48.0).</td></tr>
+            <tr><td>Scanner, Generics, ConcurrentHashMap</td><td>java.util / concurrent</td><td>JDK 5</td><td>Unavailable in JDK 1.2–1.4; use BufferedReader in Java 2.</td></tr>
+            <tr><td>Stream, Optional, LocalDate</td><td>java.util.stream / time</td><td>JDK 8 LTS</td><td>Functional streams, lambdas, and modern date/time (Bytecode 52.0).</td></tr>
+            <tr><td>HttpClient, List.of, Files.readString</td><td>java.net.http / java.nio.file</td><td>JDK 9 / 11 LTS</td><td>Standard HTTP/2 client and immutable collection factories (Bytecode 55.0).</td></tr>
+            <tr><td>Record, Sealed Classes, HexFormat</td><td>java.lang / java.util</td><td>JDK 16 / 17 LTS</td><td>Immutable data carriers and sealed class hierarchies (Bytecode 61.0).</td></tr>
+            <tr><td>Virtual Threads, SequencedCollection</td><td>java.lang / java.util</td><td>JDK 21 LTS</td><td>Lightweight Project Loom threads and ordered collection accessors (Bytecode 65.0).</td></tr>
+            <tr><td>Stream Gatherers, Scoped Values, FFM</td><td>java.util.stream / foreign</td><td>JDK 22–25 LTS</td><td>Custom intermediate stream operations and native memory access (Bytecode 69.0).</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- OFFLINE PROJECTS -->
+    <section id="sec-projects" class="hidden">
+      <div class="card">
+        <h3>Offline Project Manager (Persisted in Browser Storage)</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;">
+          <input id="newProjName" type="text" placeholder="Project Name (e.g. Java17RecordsLab)" />
+          <select id="newProjJdk">
+            <option value="2">JDK 1.2 (Java 2)</option>
+            <option value="8">JDK 8 LTS</option>
+            <option value="17" selected>JDK 17 LTS</option>
+            <option value="21">JDK 21 LTS</option>
+            <option value="25">JDK 25 LTS</option>
+          </select>
+          <button class="primary" onclick="saveCurrentAsProject()">Save Current Editor as Project</button>
+        </div>
+        <div id="projectsList"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "universal-java-studio-web",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Universal Java Studio — Standalone All-Version Offline Java Web Application (JDK 1.0 to JDK 25)",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "python3 -m http.server 8080"
+  }
+}

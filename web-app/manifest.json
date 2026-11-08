@@ -1,0 +1,24 @@
+{
+  "name": "Universal Java Studio — Offline Web IDE (JDK 1.0 – JDK 25)",
+  "short_name": "Universal Java Studio",
+  "description": "Complete All-Version Offline Java Web IDE, Compiler, Execution Environment, Version Explorer & Learning Platform (JDK 1.0 to JDK 25)",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0D1117",
+  "theme_color": "#0D1117",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230D1117'/%3E%3Crect x='12' y='12' width='168' height='168' rx='28' fill='%23161B22' stroke='%2358A6FF' stroke-width='5'/%3E%3Ctext x='96' y='108' font-family='monospace' font-size='60' font-weight='bold' fill='%23F0883E' text-anchor='middle'%3E%7BJava%7D%3C/text%3E%3Ctext x='96' y='152' font-family='monospace' font-size='22' fill='%2358A6FF' text-anchor='middle'%3EJDK 1.0-25%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230D1117'/%3E%3Crect x='32' y='32' width='448' height='448' rx='72' fill='%23161B22' stroke='%2358A6FF' stroke-width='12'/%3E%3Ctext x='256' y='290' font-family='monospace' font-size='168' font-weight='bold' fill='%23F0883E' text-anchor='middle'%3E%7BJava%7D%3C/text%3E%3Ctext x='256' y='410' font-family='monospace' font-size='56' fill='%2358A6FF' text-anchor='middle'%3EJDK 1.0 - 25%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
