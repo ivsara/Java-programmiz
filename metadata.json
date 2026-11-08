@@ -1,0 +1,6 @@
+{
+  "name": "Universal Java Studio",
+  "description": "All-Version Offline Java IDE, Compiler, Execution Environment, API Reference, and Learning Platform supporting JDK 1.0 through JDK 25+.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

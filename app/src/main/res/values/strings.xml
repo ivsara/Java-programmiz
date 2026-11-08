@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Universal Java Studio</string>
+    <string name="ide_subtitle">All-Version Offline Java IDE, Compiler &amp; Learning Laboratory (JDK 1.0 – JDK 25+)</string>
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_editor">Code Editor</string>
+    <string name="nav_jdk_manager">JDK Manager</string>
+    <string name="nav_tutorials">Tutorials</string>
+    <string name="nav_api_docs">API Docs</string>
+    <string name="nav_version_explorer">Versions</string>
+    <string name="nav_practice_lab">Practice Lab</string>
+    <string name="nav_quiz">Quizzes</string>
+    <string name="nav_projects">Projects</string>
+    <string name="nav_resources">Resources &amp; Tests</string>
+    <string name="action_compile">Compile</string>
+    <string name="action_run">Run</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_save">Save</string>
+    <string name="action_new_file">New File</string>
+    <string name="action_new_project">New Project</string>
+    <string name="action_theme_toggle">Toggle Theme</string>
+</resources>
